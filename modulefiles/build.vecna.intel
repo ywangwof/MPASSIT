@@ -1,0 +1,21 @@
+
+if [[ $- != *i* ]]; then
+    source /usr/share/Modules/init/bash
+fi
+
+module purge
+
+module load compiler/2023.2.1
+module load mkl/2023.2.0
+module load hpcx-mt-ompi-intel-classic
+
+export INTEL_LIBPATH=/scratch/ywang/tools/intel
+export ESMFMKFILE=/scratch/ywang/tools/intel/esmf-8.6.0/lib/libO/Linux.intel.64.openmpi.default/esmf.mk
+
+export NETCDF=${INTEL_LIBPATH}
+export PNETCDF=${INTEL_LIBPATH}
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/scratch/ywang/MPAS/tools/lib
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${INTEL_LIBPATH}/lib:${INTEL_LIBPATH}/lib64
+
+export PATH=.:$PATH:${INTEL_LIBPATH}/bin:/scratch/ywang/MPAS/tools/bin
