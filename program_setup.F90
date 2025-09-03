@@ -17,7 +17,7 @@
 
  private
 
- type(ESMF_LogKind_Flag), public :: LogType 
+ type(ESMF_LogKind_Flag), public :: LogType = ESMF_LOGKIND_NONE
  
  ! Namelist variables
  character(len=500), public      :: grid_file_input_grid = "NULL" !< Full path of MPAS file containing grid information

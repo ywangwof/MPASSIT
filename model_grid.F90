@@ -1252,6 +1252,10 @@ if (localpet==0) print*,"- CALL FieldCreate FOR TARGET GRID mapfac_m."
  error = nf90_get_att(ncid,NF90_GLOBAL,'DX',dx)
  call netcdf_err(error, 'reading dx')
 
+ if (localpet==0) print*,'- READ GLOBAL ATTRIBUTE DY'
+ error = nf90_get_att(ncid,NF90_GLOBAL,'DY',dy)
+ call netcdf_err(error, 'reading dy')
+
  if (localpet==0) print*,"- I/J DIMENSIONS OF THE TARGET GRID TILES ", i_target, j_target
 
  ip1_target = i_target + 1
@@ -1286,7 +1290,7 @@ if (localpet==0) print*,"- CALL FieldCreate FOR TARGET GRID mapfac_m."
  call netcdf_err(error, 'GETTING MAP_PROJ GLOBAL ATTRIBUTE')
 
  error = nf90_get_att(ncid, NF90_GLOBAL, 'MAP_PROJ_CHAR', map_proj_char)
- !call netcdf_err(error, 'GETTING MAP_PROJ GLOBAL ATTRIBUTE')
+ !call netcdf_err(error, 'GETTING MAP_PROJ_CHAR GLOBAL ATTRIBUTE')
  if (error .ne. 0) then
    if (proj_code == 1) then
      map_proj_char = "Lambert Conformal"
