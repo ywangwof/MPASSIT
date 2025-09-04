@@ -367,6 +367,8 @@
     mp_scheme = 8
   elseif (trim(att_text) == 'mp_nssl2m') then
     mp_scheme = 18
+  elseif (trim(att_text) == 'mp_tempo') then
+    mp_scheme = 38
   endif
 
 
