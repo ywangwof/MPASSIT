@@ -166,7 +166,7 @@
  allocate(dummy2(nz_input, nCells_input,1))
 
  do i = 1,n_diag_fields
-    
+
     call ESMF_FieldGet(fields(i), name=vname, rc=rc)
     if(ESMF_logFoundError(rcToCheck=rc,msg=ESMF_LOGERR_PASSTHRU,line=__LINE__,file=__FILE__)) &
      call error_handler("IN FieldGet", rc)
@@ -174,7 +174,7 @@
         do_u10_interp = 1
         u10_ind = i
     endif
-    if(vname=='v10') then 
+    if(vname=='v10') then
         do_v10_interp = 1
         v10_ind = i
     endif

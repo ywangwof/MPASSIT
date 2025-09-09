@@ -28,7 +28,7 @@ contains
                                  stand_lon, proj_code, map_proj_char, &
                                  i_target, j_target, dx, dy, &
                                  ref_lat, ref_lon, pole_lat, &
-                                 pole_lon
+                                 pole_lon, initialization_time
 
         use model_grid, only: target_grid, &
                               ip1_target, jp1_target, &
@@ -123,7 +123,9 @@ contains
                                             dumsmall(:, :), dum3dtmp(:, :, :), dum1d(:)
 
         type(esmf_field), allocatable    :: fields(:), field_write_2d(:), field_extra3(:)
-        type(timedelta)                 :: xtime_dt
+        type(timedelta)                  :: xtime_dt
+
+        character(50)                    :: model_begin_time
 
         n2d = n_diag_fields + n_hist_fields_2d_patch + n_hist_fields_2d_nstd + n_hist_fields_2d_cons
         allocate (field_write_2d(n2d), id_vars2(n2d))
@@ -132,6 +134,12 @@ contains
         allocate (id_vars3_nzp1(n_hist_fields_3d_nzp1))
         allocate (id_vars3_vert(n_hist_fields_3d_vert))
         allocate (id_vars_soil(n_hist_fields_soil))
+
+        if (TRIM(initialization_time) /= 'NULL' ) THEN
+            model_begin_time = initialization_time
+        ELSE
+            model_begin_time = start_time
+        END IF
 
         if (localpet == 0) then
             allocate (dumsmall(nsoil_input, 1))
@@ -203,10 +211,10 @@ contains
             error = nf90_put_att(ncid, NF90_GLOBAL, 'BOTTOM-TOP_GRID_DIMENSION', nz_input + 1)
             call netcdf_err(error, 'DEFINING BOTTOM-TOP GRID DIMENSION GLOBAL ATTRIBUTE')
 
-            error = nf90_put_att(ncid, NF90_GLOBAL, 'SIMULATION_START_DATE', start_time)
+            error = nf90_put_att(ncid, NF90_GLOBAL, 'SIMULATION_START_DATE', model_begin_time)
             call netcdf_err(error, 'DEFINING SUMLATION START DATE GLOBAL ATTRIBUTE')
 
-            error = nf90_put_att(ncid, NF90_GLOBAL, 'START_DATE', start_time)
+            error = nf90_put_att(ncid, NF90_GLOBAL, 'START_DATE', model_begin_time)
             call netcdf_err(error, 'DEFINING START DATE GLOBAL ATTRIBUTE')
 
             error = nf90_put_att(ncid, NF90_GLOBAL, 'DX', dx)
@@ -473,7 +481,7 @@ contains
                error = nf90_put_att(ncid, id_sina, "stagger", " ")
                call netcdf_err(error, 'DEFINING STAGGER')
                error = nf90_put_att(ncid, id_sina, "FieldType", 104)
-               call netcdf_err(error, 'DEFINING FieldType')     
+               call netcdf_err(error, 'DEFINING FieldType')
             endif
 
             error = nf90_def_var(ncid, 'Z_C', NF90_FLOAT, (/dim_lon, dim_lat, dim_zp1, dim_time/), id_z)
@@ -549,9 +557,9 @@ contains
 
             error = nf90_def_var(ncid, 'XTIME', NF90_FLOAT, (/dim_time/), id_xtime)
             call netcdf_err(error, 'DEFINING XTIME FIELD')
-            error = nf90_put_att(ncid, id_xtime, "description", "minutes since "//start_time)
+            error = nf90_put_att(ncid, id_xtime, "description", "minutes since "//model_begin_time)
             call netcdf_err(error, 'DEFINING XTIME NAME')
-            error = nf90_put_att(ncid, id_xtime, "units", "minutes since "//start_time)
+            error = nf90_put_att(ncid, id_xtime, "units", "minutes since "//model_begin_time)
             call netcdf_err(error, 'DEFINING XTIME UNITS')
             error = nf90_put_att(ncid, id_xtime, "stagger", "")
             call netcdf_err(error, 'DEFINING STAGGER')
@@ -828,7 +836,7 @@ contains
                 end do
                 deallocate (fields)
             end if
-            if (localpet==0) then 
+            if (localpet==0) then
             if (do_u_interp==1) then
                print *, "- DEFINE ON FILE STAGGERED TARGET GRID U"
                error = nf90_def_var(ncid, "U", NF90_FLOAT, (/dim_lon_stag, dim_lat, dim_z, dim_time/),id_u)
@@ -1159,7 +1167,7 @@ contains
 !   u
        if (do_u_interp == 1) then
           if (localpet == 0) print *, "- CALL FieldGather FOR TARGET GRID U"
-          if (localpet == 0) then 
+          if (localpet == 0) then
             allocate (dum3dtmp(i_target + 1, j_target, nz_input))
           else
             allocate (dum3dtmp(0,0,0))
@@ -1209,12 +1217,12 @@ contains
 
         if (localpet == 0) print *, "- WRITE TO FILE TARGET GRID ITIMESTEP"
         if (localpet == 0) then
-            sy = substr(start_time, 1, 4)
-            sm = substr(start_time, 6, 7)
-            sd = substr(start_time, 9, 10)
-            sh = substr(start_time, 12, 13)
-            smi = substr(start_time, 15, 16)
-            ss = substr(start_time, 18, 19)
+            sy = substr(model_begin_time, 1, 4)
+            sm = substr(model_begin_time, 6, 7)
+            sd = substr(model_begin_time, 9, 10)
+            sh = substr(model_begin_time, 12, 13)
+            smi = substr(model_begin_time, 15, 16)
+            ss = substr(model_begin_time, 18, 19)
 
             vy = substr(valid_time(1, 1), 1, 4)
             vm = substr(valid_time(1, 1), 6, 7)
