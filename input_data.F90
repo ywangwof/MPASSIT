@@ -437,7 +437,7 @@
 
         if (localpet==0) print*,"- READ ", trim(vname)
         error=nf90_inq_varid(ncid, trim(vname), id_var)
-        call netcdf_err(error, 'reading field id' )
+        call netcdf_err(error, 'reading field id  - '//trim(vname) )
         error=nf90_get_var(ncid, id_var, dummy2)
         call netcdf_err(error, 'reading field' )
         error=nf90_get_att(ncid,id_var,'units',target_hist_units_2d_patch(i))
@@ -489,7 +489,7 @@
 
         if (localpet==0) print*,"- READ ", trim(vname)
         error=nf90_inq_varid(ncid, trim(vname), id_var)
-        call netcdf_err(error, 'reading field id' )
+        call netcdf_err(error, 'reading field id  - '//trim(vname) )
         error=nf90_get_var(ncid, id_var, dummy2)
         call netcdf_err(error, 'reading field' )
         error=nf90_get_att(ncid,id_var,'units',target_hist_units_2d_cons(i))
@@ -540,7 +540,7 @@
 
         if (localpet==0) print*,"- READ ", trim(vname)
         error=nf90_inq_varid(ncid, trim(vname), id_var)
-        call netcdf_err(error, 'reading field id' )
+        call netcdf_err(error, 'reading field id  - '//trim(vname) )
         error=nf90_get_var(ncid, id_var, dummy2)
         call netcdf_err(error, 'reading field' )
         error=nf90_get_att(ncid,id_var,'units',target_hist_units_2d_nstd(i))
@@ -591,7 +591,7 @@
 
         if (localpet==0) print*,"- READ ", trim(vname)
         error=nf90_inq_varid(ncid, trim(vname), id_var)
-        call netcdf_err(error, 'reading field id' )
+        call netcdf_err(error, 'reading field id - '//trim(vname) )
         error=nf90_get_var(ncid, id_var, dummy3)
         call netcdf_err(error, 'reading field' )
         error=nf90_get_att(ncid,id_var,'units',target_hist_units_soil(i))
@@ -643,7 +643,7 @@
 
         if (localpet==0) print*,"- READ ", trim(vname)
         error=nf90_inq_varid(ncid, trim(vname), id_var)
-        call netcdf_err(error, 'reading field id' )
+        call netcdf_err(error, 'reading field id - '//trim(vname) )
         error=nf90_get_var(ncid, id_var, dummy3)
         call netcdf_err(error, 'reading field' )
         error=nf90_get_att(ncid,id_var,'units',target_hist_units_3d_nz(i))
@@ -672,7 +672,7 @@
          call error_handler("IN FieldGet", rc)
     if (localpet==0) print*, "- READ uReconstructZonal "
     error=nf90_inq_varid(ncid, "uReconstructZonal", id_var)
-    call netcdf_err(error, 'reading field id' )
+    call netcdf_err(error, 'reading field id - uReconstructZonal' )
     error=nf90_get_var(ncid, id_var, dummy3)
     call netcdf_err(error, 'reading field' )
 
@@ -691,7 +691,7 @@
          call error_handler("IN FieldGet", rc)
     if (localpet==0) print*, "- READ uReconstructMeridional "
     error=nf90_inq_varid(ncid, "uReconstructMeridional", id_var)
-    call netcdf_err(error, 'reading field id' )
+    call netcdf_err(error, 'reading field id - uReconstructMeridional' )
     error=nf90_get_var(ncid, id_var, dummy3)
     call netcdf_err(error, 'reading field' )
 
@@ -735,7 +735,7 @@
 
         if (localpet==0) print*,"- READ ", trim(vname)
         error=nf90_inq_varid(ncid, trim(vname), id_var)
-        call netcdf_err(error, 'reading field id' )
+        call netcdf_err(error, 'reading field id  - '//trim(vname) )
         error=nf90_get_var(ncid, id_var, dummy3)
         call netcdf_err(error, 'reading field' )
         error=nf90_get_att(ncid,id_var,'units',target_hist_units_3d_nzp1(i))
@@ -788,7 +788,7 @@
 
         if (localpet==0) print*,"- READ ", trim(vname)
         error=nf90_inq_varid(ncid, trim(vname), id_var)
-        call netcdf_err(error, 'reading field id' )
+        call netcdf_err(error, 'reading field id  - '//trim(vname) )
         error=nf90_get_var(ncid, id_var, dummy3)
         call netcdf_err(error, 'reading field' )
         error=nf90_get_att(ncid,id_var,'units',target_hist_units_3d_vert(i))

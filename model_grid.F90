@@ -1910,7 +1910,7 @@ if (localpet==0) print*,"- CALL FieldCreate FOR TARGET GRID LATITUDE."
   real(esmf_kind_r8), intent(inout), pointer   :: latitude_sw(:,:)
   real(esmf_kind_r8), intent(in),pointer    :: longitude(:,:)
   real(esmf_kind_r8), intent(inout), pointer   :: longitude_sw(:,:)
-  real(esmf_kind_r8), intent(in)    :: dx !grid cell side size (m)
+  real, intent(in)    :: dx !grid cell side size (m)
 
   integer, intent(in) :: clb(2), cub(2)
 
@@ -2200,13 +2200,15 @@ end subroutine unique_sort
       ! Arguments
       integer, intent(in) :: start_mem_i, start_mem_j, end_mem_i, &
                              end_mem_j, stagger
-      real, dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(out) :: xlat_arr, xlon_arr
+      real(esmf_kind_r8), dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(out) :: xlat_arr, xlon_arr
       logical, optional, intent(in) :: comp_ll
       integer, optional, intent(in) :: sub_x, sub_y
 
       ! Local variables
       integer :: i, j
       real :: rx, ry
+
+      real :: xlat, xlon
 
       rx = 1.0
       ry = 1.0
@@ -2215,8 +2217,9 @@ end subroutine unique_sort
 
       do i=start_mem_i, end_mem_i
          do j=start_mem_j, end_mem_j
-            call xytoll(real(i-0.5)/rx+0.5, real(j-0.5)/ry+0.5, &
-                        xlat_arr(i,j), xlon_arr(i,j), stagger, comp_ll=comp_ll)
+            call xytoll(real(i-0.5)/rx+0.5, real(j-0.5)/ry+0.5, xlat, xlon, stagger, comp_ll=comp_ll)
+            xlat_arr(i,j) = xlat
+            xlon_arr(i,j) = xlon
          end do
       end do
 
@@ -2237,13 +2240,14 @@ end subroutine unique_sort
 
       ! Arguments
       integer, intent(in) :: start_mem_i, start_mem_j, end_mem_i, end_mem_j
-      real, dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(in) :: xlat_arr, xlon_arr
-      real, dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(out) :: mapfac_arr_x
-      real, dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(out) :: mapfac_arr_y
+      real(esmf_kind_r8), dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(in) :: xlat_arr, xlon_arr
+      real(esmf_kind_r8), dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(out) :: mapfac_arr_x
+      real(esmf_kind_r8), dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(out) :: mapfac_arr_y
 
       ! Local variables
       integer :: i, j
       real :: n, colat, colat0, colat1, colat2, comp_lat, comp_lon
+      real :: xlat, xlon
 
       !
       ! Equations for map factor given in Principles of Meteorological Analysis,
@@ -2338,19 +2342,21 @@ end subroutine unique_sort
          else
             do i=start_mem_i, end_mem_i
                do j=start_mem_j, end_mem_j
-                  call rotate_coords(xlat_arr(i,j),xlon_arr(i,j), &
-                                     comp_lat, comp_lon, &
-                                     pole_lat, pole_lon, stand_lon, &
-                                     -1)
-                  if (abs(comp_lat) >= 90.0) then
-                     mapfac_arr_x(i,j) = 0.    ! MSF actually becomes infinite at poles, but
-                                               !   the values should never be used there; by
-                                               !   setting to 0, we hope to induce a "divide
-                                               !   by zero" error if they are
-                  else
-                     mapfac_arr_x(i,j) = 1.0 / cos(comp_lat*rad_per_deg)
-                  end if
-                  mapfac_arr_y(i,j) = 1.0
+                    xlat = xlat_arr(i,j)
+                    xlon = xlon_arr(i,j)
+                    call rotate_coords(xlat,xlon, &
+                                       comp_lat, comp_lon, &
+                                       pole_lat, pole_lon, stand_lon, &
+                                       -1)
+                    if (abs(comp_lat) >= 90.0) then
+                       mapfac_arr_x(i,j) = 0.    ! MSF actually becomes infinite at poles, but
+                                                 !   the values should never be used there; by
+                                                 !   setting to 0, we hope to induce a "divide
+                                                 !   by zero" error if they are
+                    else
+                       mapfac_arr_x(i,j) = 1.0 / cos(comp_lat*rad_per_deg)
+                    end if
+                    mapfac_arr_y(i,j) = 1.0
                end do
             end do
          end if
@@ -2459,7 +2465,7 @@ end subroutine unique_sort
      ! Arguments
       integer, intent(in) :: start_mem_i, start_mem_j, end_mem_i, end_mem_j
       real(esmf_kind_r8), dimension(start_mem_i:end_mem_i, start_mem_j:end_mem_j), intent(in) :: xlat_arr, xlon_arr
-      real, pointer, dimension(:,:), intent(inout) :: cosa, sina
+      real(esmf_kind_r8), pointer, dimension(:,:), intent(inout) :: cosa, sina
       ! Local variables
       integer :: i, j
       real :: alpha, d_lon

@@ -11,7 +11,7 @@
 !! This file reads a configuration namelist.
 !!
 !! Link the configuration namelist to ./fort.41. Then run the program
-!! with preferably a number of MPI tasks which the number of MPAS cells (NOT nodes) is 
+!! with preferably a number of MPI tasks which the number of MPAS cells (NOT nodes) is
 !! evenly divisible by (e.g., 36 (or 360) tasks for 36,000 input MPAS cells).
 !!
 !! @note For variable names “input” refers to the MPAS data input to the
@@ -33,9 +33,9 @@
                                  cleanup_input_target_grid_data
 
  use input_data, only         :  read_input_data
- 
+
  use interp, only             :  interp_data
- 
+
  use write_data, only         : write_to_file
 
  implicit none
@@ -81,7 +81,7 @@
 !-------------------------------------------------------------------------
 
 !  print*,"- INITIALIZE ESMF"
- call ESMF_Initialize(rc=ierr, logkindflag=LogType)
+ call ESMF_Initialize(rc=ierr, logkindflag=ESMF_LOGKIND_NONE)
  if(ESMF_logFoundError(rcToCheck=ierr, msg=ESMF_LOGERR_PASSTHRU,  line=__LINE__,file=__FILE__)) &
     call error_handler("INITIALIZING ESMF", ierr)
 
@@ -109,7 +109,7 @@
 !-------------------------------------------------------------------------
 
  call define_target_grid(localpet, npets)
- 
+
  call define_input_grid(localpet, npets)
 
 !-------------------------------------------------------------------------
@@ -123,13 +123,13 @@ call read_input_data(localpet)
 !-------------------------------------------------------------------------
 
  call interp_data(localpet)
- 
+
 !-------------------------------------------------------------------------
 ! Write data to file
 !-------------------------------------------------------------------------
 
  call write_to_file(localpet)
- 
+
 !-------------------------------------------------------------------------
 ! Finish up
 !-------------------------------------------------------------------------
