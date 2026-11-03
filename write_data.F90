@@ -1356,6 +1356,12 @@ contains
                     call error_handler("IN FieldGet", error)                
 
                 dum3d(:,:,:) = dum3dptr(clb(1):cub(1),clb(2):cub(2),:)
+                ! Sanitize NaN before min/max and output. The 0-h diagnostic
+                ! refl10cm from the frdd/TEMPO model is written before
+                ! microphysics runs, leaving it uninitialized (NaN). The self
+                ! comparison (dum3d /= dum3d) is a non-signaling IEEE predicate,
+                ! safe even under -fpe0 trapping.
+                where (dum3d /= dum3d) dum3d = -35.0
                 if (localpet == 0) print *, trim(varname), minval(dum3d), maxval(dum3d)
                  error = nf90_put_var(ncid, id_vars3_nz(i), dum3d, start = (/clb(1),clb(2),1,1/), &
                                 count=(/count1,count2, nz_input, 1/))
