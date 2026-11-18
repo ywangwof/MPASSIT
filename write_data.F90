@@ -476,7 +476,7 @@ contains
                call netcdf_err(error ,'SETTING COLLECTIVE ACCESS')     
             endif
 
-            error = nf90_def_var(ncid, 'Z_C', NF90_FLOAT, (/dim_lon, dim_lat, dim_zp1, dim_time/), id_z)
+            error = nf90_def_var(ncid, 'Z_C', NF90_FLOAT, (/dim_lon, dim_lat, dim_z, dim_time/), id_z)
             call netcdf_err(error, 'DEFINING Z_C FIELD')
             error = nf90_put_att(ncid, id_z, "description", "Layer center height above mean sea level")
             call netcdf_err(error, 'DEFINING Z_C NAME')
