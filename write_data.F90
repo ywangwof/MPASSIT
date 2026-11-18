@@ -490,6 +490,8 @@ contains
             call netcdf_err(error, 'DEFINING STAGGER')
             error = nf90_put_att(ncid, id_z, "FieldType", 104)
             call netcdf_err(error, 'DEFINING FieldType')
+            error = nf90_put_att(ncid, id_z, "_FillValue", missing_value)
+            call netcdf_err(error, 'DEFINING _FillValue')
             error =  nf90_var_par_access(ncid, id_z, NF90_COLLECTIVE)
             call netcdf_err(error ,'SETTING COLLECTIVE ACCESS')
 
@@ -946,10 +948,10 @@ contains
                     call netcdf_err(error, 'DEFINING MEMORYORDER')
                     error = nf90_put_att(ncid, id_vars3_nzp1(i), "coordinates", "XLONG XLAT XTIME")
                     call netcdf_err(error, 'DEFINING COORD')
-                    if (wrf_mod_vars .and. trim(varname) == 'PHB') then
-                        error = nf90_put_att(ncid, id_vars3_nzp1(i), "units", "gpm")
+                    if (trim(varname) == 'PHB') then
+                        error = nf90_put_att(ncid, id_vars3_nzp1(i), "units", "m2 s-2")
                         call netcdf_err(error, 'DEFINING UNITS')
-                        error = nf90_put_att(ncid, id_vars3_nzp1(i), "description", "Base Geopotential Height")
+                        error = nf90_put_att(ncid, id_vars3_nzp1(i), "description", "base-state geopotential")
                         call netcdf_err(error, 'DEFINING LONG_NAME')
                     else
                         error = nf90_put_att(ncid, id_vars3_nzp1(i), "units", target_hist_units_3d_nzp1(i))
@@ -973,9 +975,9 @@ contains
                         call netcdf_err(error, 'DEFINING MEMORYORDER')
                         error = nf90_put_att(ncid, id_ph, "coordinates", "XLONG XLAT XTIME")
                         call netcdf_err(error, 'DEFINING COORD')
-                        error = nf90_put_att(ncid, id_ph, "units", "gpm")
+                        error = nf90_put_att(ncid, id_ph, "units", "m2 s-2")
                         call netcdf_err(error, 'DEFINING UNITS')
-                        error = nf90_put_att(ncid, id_ph, "description", 'Perturbation Geopotential Height')
+                        error = nf90_put_att(ncid, id_ph, "description", 'perturbation geopotential')
                         call netcdf_err(error, 'DEFINING LONG_NAME')
                         error = nf90_put_att(ncid, id_ph, "stagger", "Z")
                         call netcdf_err(error, 'DEFINING STAGGER')
